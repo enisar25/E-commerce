@@ -1,7 +1,6 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 import { UserRole, DEFAULT_ROLE } from "src/common/enums/roles.enum";
-import { Product } from "src/product/product.model";
 
 @Schema({
     timestamps: true,

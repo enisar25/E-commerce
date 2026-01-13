@@ -60,7 +60,7 @@ export class AuthGuard implements CanActivate {
     }
 
     // Optional: Verify role hasn't changed (if role was in token)
-    if (decoded.role && decoded.role !== user.role) {
+    if (decoded.role && decoded.role !== (user.role as string)) {
       this.logger.warn(
         `User ${decoded.id} role changed from ${decoded.role} to ${user.role}`,
       );

@@ -1,6 +1,5 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
-import { User } from "../user/user.model";
 
 export enum OTPTypeEnum {
   VERIFY_EMAIL = 'VERIFY_EMAIL',

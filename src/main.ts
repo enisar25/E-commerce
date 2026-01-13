@@ -53,11 +53,12 @@ async function bootstrap() {
 
     logger.log(`🚀 Application is running on: http://localhost:${port}/${apiPrefix}`);
     logger.log(`📦 Environment: ${nodeEnv}`);
-    logger.log(`🌍 CORS enabled for: ${corsOrigins === '*' ? 'all origins' : corsOrigins}`);
+    const corsDisplay = corsOrigins === '*' ? 'all origins' : (Array.isArray(corsOrigins) ? corsOrigins.join(', ') : corsOrigins || 'none');
+    logger.log(`🌍 CORS enabled for: ${corsDisplay}`);
   } catch (error) {
     logger.error('❌ Error starting application', error);
     process.exit(1);
   }
 }
 
-bootstrap();
+void bootstrap();

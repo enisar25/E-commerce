@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductRepo } from './product.repo';
 import { Types } from 'mongoose';
 import fs from 'fs/promises';

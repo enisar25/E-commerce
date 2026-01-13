@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { User, UserModel } from "./user.model";
+import { User } from "./user.model";
 import { BaseRepository } from "../database/repositories/base.repository";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";

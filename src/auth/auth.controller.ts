@@ -44,7 +44,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard)
-  async getProfile(@Req() req: AuthRequest) {
+  getProfile(@Req() req: AuthRequest) {
     return {
       statusCode: 200,
       message: 'Profile fetched successfully',

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber, IsMongoId, Min, Max, MinLength, MaxLength, IsArray, ValidateNested, IsObject } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsMongoId, Min, Max, MinLength, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
 

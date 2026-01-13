@@ -1,8 +1,6 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 import { createSlug } from "src/common/utils/createSlug";
-import { User } from "src/user/user.model";
-import { Brand } from "src/brand/brand.model";
 import { imageSchema, Image } from "src/common/schemas/image.schema";
 
 @Schema({

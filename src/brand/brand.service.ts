@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { UpdateBrandDto } from './dto/update-brand.dto';
 import { BrandRepo } from './brand.repo';
 import { Types } from 'mongoose';
 import fs from 'fs/promises';

@@ -3,8 +3,6 @@ import { BaseRepository } from "../database/repositories/base.repository";
 import { Model, Types } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { OTP, OTPTypeEnum } from "./otp.model";
-import { generateOTP } from "src/common/utils/email/generateOTP";
-import { hashData } from "src/common/utils/security/hash";
 
 @Injectable()
 export class OTPRepo extends BaseRepository<OTP>{

@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = async ({ to, html, subject }:{
+export const sendEmail = ({ to, html, subject }:{
     to: string,
     subject: string,
     html: string
-}) => {
+}): Promise<void> => {
     const transportOptions = {
         service : process.env.EMAIL_SERVICE,
         auth: {

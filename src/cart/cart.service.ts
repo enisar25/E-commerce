@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CartRepo } from './cart.repo';
 import { ProductRepo } from 'src/product/product.repo';
-import { CouponRepo } from 'src/coupon/coupon.repo';
 import { CouponService } from 'src/coupon/coupon.service';
 import { Types } from 'mongoose';
 import { CartItem } from './cart.model';

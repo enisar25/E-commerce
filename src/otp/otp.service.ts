@@ -47,7 +47,7 @@ export class OTPService {
     return true;
   }
 
-  async deleteOTP(userId: Types.ObjectId, type: OTPTypeEnum, otp: string) {
+  async deleteOTP(userId: Types.ObjectId, _type: OTPTypeEnum, _otp: string) {
     await this.otpRepo.findByIdAndDelete({id: userId});
     return true;
   }

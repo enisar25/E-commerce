@@ -21,7 +21,7 @@ export class JwtService {
    * @param options - Optional JWT sign options (will merge with defaults)
    * @returns JWT token string
    */
-  async generateToken<T extends object = JwtPayload>(
+  generateToken<T extends object = JwtPayload>(
     payload: T,
     options?: Partial<JwtSignOptions>,
   ): Promise<string> {

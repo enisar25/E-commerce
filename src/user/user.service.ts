@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { UserRepo } from './user.repo';
-import { Types } from 'mongoose';
 import { UserRole } from 'src/common/enums/roles.enum';
 
 interface UpdateUserPayload {

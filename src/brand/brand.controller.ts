@@ -7,7 +7,6 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { ZodPipe } from 'src/common/pipes/zod.pipe';
 import { createBrandSchema } from './validation/create-brand.schema';
 import { updateBrandSchema } from './validation/update-brand.schema';

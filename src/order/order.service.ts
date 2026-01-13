@@ -52,7 +52,7 @@ export class OrderService {
       const product = await this.productRepo.findById({ id: cartItem.productId.toString() });
 
       if (!product) {
-        throw new NotFoundException(`Product ${cartItem.productId} not found`);
+        throw new NotFoundException(`Product ${String(cartItem.productId)} not found`);
       }
 
       if (!product.isActive) {
