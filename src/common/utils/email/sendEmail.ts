@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = ({ to, html, subject }:{
+export const sendEmail = async ({ to, html, subject }:{
     to: string,
     subject: string,
     html: string
@@ -16,15 +16,11 @@ export const sendEmail = ({ to, html, subject }:{
 
     const transporter = nodemailer.createTransport(transportOptions);
 
-    const main = async () => {
-        const info = await transporter.sendMail({
-            from: `"Social App" <${process.env.EMAIL_FROM}>`,
-            to,
-            subject,
-            html
-        });
-        console.log('Message sent: %s', info.messageId);
-    }
-
-    main().catch(console.error);
+    const info = await transporter.sendMail({
+        from: `"Social App" <${process.env.EMAIL_FROM}>`,
+        to,
+        subject,
+        html
+    });
+    console.log('Message sent: %s', info.messageId);
 }
