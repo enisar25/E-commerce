@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved project structure
 - Enhanced error handling
 - Standardized response format
+- Fixed circular dependency handling in Order and Payment modules (added `forwardRef()` on both sides)
+
+### Removed
+- Self-Hosted payment method support (use Stripe or Cash on Delivery instead)
+- Self-Hosted payment endpoint `POST /api/checkout/self-hosted/:paymentIntentId`
+- `SelfHostedPaymentService` and related dependencies
 
 ## [1.0.0] - 2024-01-01
 

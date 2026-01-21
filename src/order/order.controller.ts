@@ -26,12 +26,6 @@ import { OrderStatus } from './order.model';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  @UsePipes(new ZodPipe(createOrderSchema))
-  create(@Req() req: AuthRequest, @Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(req.user._id.toString(), createOrderDto);
-  }
-
   @Get()
   findAll(
     @Req() req: AuthRequest,

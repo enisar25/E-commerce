@@ -217,6 +217,176 @@ Order N:1 User
 Order N:1 Coupon
 OrderItem N:1 Product
 CartItem N:1 Product
+Order 1:1 PaymentIntent
+```
+
+## Payment System Architecture
+
+### Overview
+
+The payment system supports multiple payment methods with a centralized payment intent mechanism:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Checkout Flow                         │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  1. Create Checkout                                     │
+│     ↓                                                   │
+│  2. Validate Cart & Products                            │
+│     ↓                                                   │
+│  3. Create Order (PENDING)                              │
+│     ↓                                                   │
+│  4. Route by Payment Method                             │
+│     ├─→ STRIPE: Create Checkout Session                │
+│     └─→ COD: Immediate Order Confirmation              │
+│     ↓                                                   │
+│  5. Return Payment Intent                               │
+│     ├─→ STRIPE: Redirect URL + Session ID              │
+│     └─→ COD: Order confirmation                        │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Supported Payment Methods
+
+#### 1. Stripe Payment
+- **Type**: Third-party payment processor
+- **Flow**: Hosted checkout with redirect
+- **Implementation**: Uses Stripe Checkout Sessions API
+- **Stock Deduction**: After webhook confirmation
+- **User Data**: Card handled by Stripe (PCI compliant)
+- **Webhook**: Listens to `payment_intent.succeeded` and `checkout.session.completed` events
+
+#### 2. Cash on Delivery (COD)
+- **Type**: Post-paid delivery
+- **Flow**: Immediate order creation
+- **Implementation**: No external integration required
+- **Stock Deduction**: Immediate (order confirmed)
+- **User Data**: No payment data needed
+- **Status**: Payment pending until delivery confirmation
+
+### Payment Intent Model
+
+```typescript
+interface PaymentIntent {
+  intentId: string;              // Unique payment intent identifier
+  orderId: ObjectId;              // Reference to order
+  userId: ObjectId;               // Reference to user
+  paymentMethod: 'STRIPE' | 'COD'; // Payment method
+  amount: number;                 // Payment amount in cents
+  currency: string;               // Currency code (USD, etc.)
+  status: PaymentIntentStatus;    // PENDING | PROCESSING | SUCCEEDED | FAILED | CANCELLED
+  stripeSessionId?: string;       // Stripe session ID (Stripe only)
+  transactionReference?: string;  // External transaction reference
+  metadata?: object;              // Additional payment metadata
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### Payment Flow by Method
+
+#### Stripe Payment Flow
+```
+1. User initiates checkout
+   ↓
+2. CheckoutService.createCheckout()
+   - Create Order (status: PENDING, paymentStatus: PENDING)
+   - Create PaymentIntent (method: STRIPE)
+   - Call StripePaymentService.createCheckoutSession()
+   ↓
+3. StripePaymentService
+   - Create Stripe Checkout Session
+   - Return session URL + ID
+   ↓
+4. Frontend redirects to Stripe
+   ↓
+5. User completes payment on Stripe
+   ↓
+6. Stripe sends webhook to /api/payment/webhook/stripe
+   ↓
+7. PaymentWebhookController
+   - Verify webhook signature
+   - Update PaymentIntent (status: SUCCEEDED)
+   - Update Order (paymentStatus: PAID)
+   - Deduct product stock
+   - Increment coupon usage
+   - Clear cart
+   ↓
+8. User redirected to success page
+```
+
+#### COD Payment Flow
+```
+1. User initiates checkout with paymentMethod: 'COD'
+   ↓
+2. CheckoutService.createCheckout()
+   - Create Order (status: PENDING, paymentStatus: PENDING)
+   - Create PaymentIntent (method: COD)
+   - Deduct product stock immediately
+   - Increment coupon usage
+   - Clear cart
+   ↓
+3. Return order confirmation
+   ↓
+4. Order awaits delivery
+   ↓
+5. On delivery, admin marks payment as paid
+   ↓
+6. Order status updated
+```
+
+### Key Components
+
+#### 1. CheckoutService
+- Validates cart and products
+- Creates orders and payment intents
+- Routes to appropriate payment processor
+- Handles stock deduction and cart clearing
+
+#### 2. StripePaymentService
+- Creates Stripe Checkout Sessions
+- Confirms payment status
+- Handles Stripe API communication
+
+#### 3. CashOnDeliveryService
+- Creates COD payment intents
+- Marks payments as confirmed when received
+- Handles COD-specific logic
+
+#### 4. PaymentWebhookController
+- Receives and verifies Stripe webhooks
+- Updates order and payment status
+- Triggers fulfillment workflow
+
+#### 5. PaymentController
+- Provides payment status queries
+- Allows users to check payment details
+- Confirms payment completion
+
+### Stock Management
+
+**Stock Deduction Strategy:**
+
+| Payment Method | Timing | Reversible |
+|---|---|---|
+| **Stripe** | After payment confirmed | Yes (refund) |
+| **COD** | Immediately on checkout | No (confirmed order) |
+
+**Stock Holds:**
+- Stripe: Stock held during checkout until webhook confirmation or 24-hour timeout
+- COD: Stock immediately deducted (no hold)
+
+### Error Handling
+
+```typescript
+// Payment-related errors
+- PaymentIntentNotFound: Attempt to access non-existent payment intent
+- UnauthorizedPaymentAccess: User attempting to access others' payment
+- PaymentMethodInvalid: Unsupported payment method selected
+- PaymentProcessingFailed: Payment processor returned error
+- WebhookSignatureInvalid: Stripe webhook signature verification failed
 ```
 
 ## Security Features

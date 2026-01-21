@@ -192,6 +192,39 @@ export class Order {
 
   @Prop({
     type: String,
+    enum: ['STRIPE', 'COD'],
+    default: 'COD',
+  })
+  paymentMethod?: string;
+
+  @Prop({
+    type: String,
+    enum: ['PENDING', 'PAID', 'FAILED', 'REFUNDED'],
+    default: 'PENDING',
+  })
+  paymentStatus?: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'PaymentIntent',
+    required: false,
+  })
+  paymentIntentId?: Types.ObjectId;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  stripeCheckoutSessionId?: string;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  stripePaymentIntentId?: string;
+
+  @Prop({
+    type: String,
     enum: Object.values(OrderStatus),
     default: OrderStatus.PENDING,
     index: true,

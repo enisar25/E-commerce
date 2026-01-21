@@ -21,6 +21,7 @@ import { CartModule } from './cart/cart.module';
 import { CouponModule } from './coupon/coupon.module';
 import { OrderModule } from './order/order.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { PaymentModule } from './payment/payment.module';
 
 // Common Modules
 import { SuccessHandlerInterceptor } from './common/interceptors/success-handler.interceptor';
@@ -76,6 +77,7 @@ import { validate } from './config/config.validator';
     CouponModule,
     OrderModule,
     FavoritesModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

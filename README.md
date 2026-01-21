@@ -6,6 +6,7 @@ A modern, scalable e-commerce backend API built with **NestJS**, **TypeScript**,
 
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
+- [Payment Methods](#-payment-methods)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
 - [Environment Variables](#-environment-variables)
@@ -26,7 +27,8 @@ A modern, scalable e-commerce backend API built with **NestJS**, **TypeScript**,
 - 🏷️ **Categories & Brands** - Organize products with categories and brands
 - 🛒 **Shopping Cart** - Add, update, and manage cart items
 - 💰 **Coupon System** - Apply discount coupons to orders
-- 📦 **Order Management** - Complete order lifecycle management
+- � **Payment Processing** - Multiple payment methods (Stripe, Cash on Delivery)
+- �📦 **Order Management** - Complete order lifecycle management
 - ⭐ **Favorites** - Save favorite products
 - 👥 **User Management** - User profiles and role management
 - 📸 **Image Upload** - Secure file upload with validation
@@ -44,6 +46,27 @@ A modern, scalable e-commerce backend API built with **NestJS**, **TypeScript**,
 - **File Upload**: Multer
 - **Email**: Nodemailer
 - **Security**: bcrypt for password hashing
+- **Payments**: Stripe integration
+
+## 💳 Payment Methods
+
+The system supports multiple secure payment methods:
+
+### Stripe Payment
+- **Type**: Online payment via Stripe
+- **Flow**: Redirect to Stripe checkout page
+- **Setup**: Requires Stripe API keys
+- **Stock Deduction**: After successful payment via webhook
+- **Best for**: Credit/Debit card payments
+
+### Cash on Delivery (COD)
+- **Type**: Post-paid delivery
+- **Flow**: Order placed immediately
+- **Setup**: No configuration needed
+- **Stock Deduction**: Immediate (order confirmed)
+- **Best for**: In-person payment or direct delivery
+
+For detailed payment configuration, see [Payment Setup Guide](docs/CHECKOUT_PAYMENT_GUIDE.md)
 
 ## 📋 Prerequisites
 
@@ -114,6 +137,10 @@ MAX_FILE_SIZE=5242880
 
 # Frontend URL (optional)
 FRONTEND_URL=http://localhost:3000
+
+# Stripe Configuration (for Stripe payments)
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 ```
 
 ### Required Variables
@@ -127,6 +154,9 @@ FRONTEND_URL=http://localhost:3000
 - `CORS_ORIGIN` - Allowed CORS origins
 - Email configuration for sending verification emails
 - `MAX_FILE_SIZE` - Maximum file upload size in bytes (default: 5MB)
+- **Stripe Configuration** (required only if using Stripe payments):
+  - `STRIPE_SECRET_KEY` - Your Stripe secret API key
+  - `STRIPE_WEBHOOK_SECRET` - Webhook signing secret for webhook verification
 
 ## 📚 Documentation
 

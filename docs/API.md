@@ -432,6 +432,184 @@ Remove product from favorites.
 
 ---
 
+### Checkout (`/api/checkout`)
+
+#### POST `/api/checkout`
+Create a checkout and initiate payment process.
+
+**Authentication:** Required
+
+**Request Body:**
+```json
+{
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA",
+    "phone": "+1234567890"
+  },
+  "shippingCost": 10.00,
+  "notes": "Please deliver before 5 PM",
+  "paymentMethod": "STRIPE",
+  "successUrl": "https://yourapp.com/success",
+  "cancelUrl": "https://yourapp.com/cancel"
+}
+```
+
+**Parameters:**
+- `shippingAddress` (required) - Shipping address object
+  - `street` (string, required) - Street address
+  - `city` (string, required) - City
+  - `state` (string, required) - State/Province
+  - `zipCode` (string, required) - ZIP/Postal code
+  - `country` (string, required) - Country
+  - `phone` (string, optional) - Phone number
+- `shippingCost` (number, optional) - Shipping cost in dollars (default: 0)
+- `notes` (string, optional) - Order notes (max 500 characters)
+- `paymentMethod` (string, required) - Payment method: `STRIPE` or `COD`
+- `successUrl` (string, optional) - Redirect URL after successful Stripe payment
+- `cancelUrl` (string, optional) - Redirect URL if user cancels Stripe payment
+
+**Response (Stripe):**
+```json
+{
+  "statusCode": 201,
+  "message": "Checkout created successfully",
+  "data": {
+    "order": {
+      "_id": "order_id",
+      "orderNumber": "ORD-20240101-001",
+      "userId": "user_id",
+      "items": [ ... ],
+      "total": 150.00,
+      "status": "PENDING",
+      "paymentStatus": "PENDING",
+      "paymentMethod": "STRIPE"
+    },
+    "paymentIntent": {
+      "paymentIntentId": "pi_...",
+      "sessionId": "cs_...",
+      "url": "https://checkout.stripe.com/..."
+    }
+  }
+}
+```
+
+**Response (COD):**
+```json
+{
+  "statusCode": 201,
+  "message": "Checkout created successfully",
+  "data": {
+    "order": {
+      "_id": "order_id",
+      "orderNumber": "ORD-20240101-001",
+      "userId": "user_id",
+      "items": [ ... ],
+      "total": 150.00,
+      "status": "PENDING",
+      "paymentStatus": "PENDING",
+      "paymentMethod": "COD"
+    },
+    "paymentIntent": {
+      "paymentIntentId": "intent_id"
+    }
+  }
+}
+```
+
+**Errors:**
+- `404` - Cart not found
+- `400` - Cart is empty
+- `400` - Product not available or out of stock
+- `400` - Invalid payment method
+
+---
+
+### Payment (`/api/payment`)
+
+#### GET `/api/payment/intent/:id`
+Get payment intent details.
+
+**Authentication:** Required
+
+**Response:**
+```json
+{
+  "statusCode": 200,
+  "message": "Payment intent fetched successfully",
+  "data": {
+    "_id": "intent_id",
+    "intentId": "pi_...",
+    "orderId": "order_id",
+    "userId": "user_id",
+    "paymentMethod": "STRIPE",
+    "amount": 15000,
+    "currency": "USD",
+    "status": "PENDING",
+    "stripeSessionId": "cs_...",
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+**Errors:**
+- `404` - Payment intent not found
+- `403` - Unauthorized access to payment intent
+
+#### GET `/api/payment/intent/:id/confirm`
+Confirm payment for Stripe transactions.
+
+**Authentication:** Required
+
+**Response:**
+```json
+{
+  "statusCode": 200,
+  "message": "Payment confirmed",
+  "data": {
+    "status": "SUCCEEDED",
+    "paymentIntentId": "pi_..."
+  }
+}
+```
+
+**Errors:**
+- `404` - Payment intent not found
+- `403` - Unauthorized access
+- `400` - Only STRIPE payments can be confirmed by users
+
+---
+
+### Payment Webhook (`/api/payment/webhook`)
+
+#### POST `/api/payment/webhook/stripe`
+Stripe webhook endpoint for payment events.
+
+**Note:** This endpoint is called by Stripe, not by your frontend.
+
+**Stripe Signature Header:** Required
+```
+Stripe-Signature: <signature>
+```
+
+**Webhook Events Handled:**
+- `payment_intent.succeeded` - Payment completed successfully
+- `checkout.session.completed` - Checkout session completed
+- `payment_intent.payment_failed` - Payment failed
+
+**Actions on Success:**
+- Update PaymentIntent status to `SUCCEEDED`
+- Update Order paymentStatus to `PAID`
+- Deduct product stock
+- Increment coupon usage (if applied)
+- Clear user's cart
+
+---
+
 ## Error Codes
 
 - `200` - Success
