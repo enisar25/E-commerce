@@ -27,8 +27,8 @@ A modern, scalable e-commerce backend API built with **NestJS**, **TypeScript**,
 - 🏷️ **Categories & Brands** - Organize products with categories and brands
 - 🛒 **Shopping Cart** - Add, update, and manage cart items
 - 💰 **Coupon System** - Apply discount coupons to orders
-- � **Payment Processing** - Multiple payment methods (Stripe, Cash on Delivery)
-- �📦 **Order Management** - Complete order lifecycle management
+- 💳 **Payment Processing** - Multiple payment methods (Stripe, Cash on Delivery)
+- 📦 **Order Management** - Complete order lifecycle management
 - ⭐ **Favorites** - Save favorite products
 - 👥 **User Management** - User profiles and role management
 - 📸 **Image Upload** - Secure file upload with validation
