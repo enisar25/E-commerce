@@ -1,8 +1,13 @@
-import { Injectable, BadRequestException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { PaymentIntentRepo } from '../payment.repo';
-import { PaymentIntent, PaymentMethod, PaymentIntentStatus } from '../payment.model';
+import { PaymentMethod, PaymentIntentStatus } from '../payment.model';
 import { Types } from 'mongoose';
 import { OrderRepo } from 'src/order/order.repo';
 import { ProductRepo } from 'src/product/product.repo';
@@ -98,8 +103,10 @@ export class StripePaymentService {
     metadata?: Record<string, any>,
   ) {
     try {
-      const frontendUrl = this.configService.get<string>('frontend.url') || 'http://localhost:3000';
-      
+      const frontendUrl =
+        this.configService.get<string>('frontend.url') ||
+        'http://localhost:3000';
+
       const session = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -115,7 +122,9 @@ export class StripePaymentService {
           },
         ],
         mode: 'payment',
-        success_url: successUrl || `${frontendUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url:
+          successUrl ||
+          `${frontendUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: cancelUrl || `${frontendUrl}/checkout/cancel`,
         metadata: {
           orderId,
@@ -155,8 +164,10 @@ export class StripePaymentService {
   }
 
   async confirmPayment(paymentIntentId: string) {
-    const paymentIntent = await this.paymentIntentRepo.findById({ id: paymentIntentId });
-    
+    const paymentIntent = await this.paymentIntentRepo.findById({
+      id: paymentIntentId,
+    });
+
     if (!paymentIntent) {
       throw new BadRequestException('Payment intent not found');
     }
@@ -171,21 +182,30 @@ export class StripePaymentService {
       );
 
       if (stripeIntent.status === 'succeeded') {
-        await this.paymentIntentRepo.updateStatus(paymentIntentId, PaymentIntentStatus.SUCCEEDED, {
-          completedAt: new Date(),
-          receipt: stripeIntent.receipt_email || undefined,
-        });
+        await this.paymentIntentRepo.updateStatus(
+          paymentIntentId,
+          PaymentIntentStatus.SUCCEEDED,
+          {
+            completedAt: new Date(),
+            receipt: stripeIntent.receipt_email || undefined,
+          },
+        );
         return { success: true, status: 'succeeded' };
       } else if (stripeIntent.status === 'requires_payment_method') {
         throw new BadRequestException('Payment method is required');
       } else if (stripeIntent.status === 'canceled') {
-        await this.paymentIntentRepo.updateStatus(paymentIntentId, PaymentIntentStatus.CANCELLED);
+        await this.paymentIntentRepo.updateStatus(
+          paymentIntentId,
+          PaymentIntentStatus.CANCELLED,
+        );
         return { success: false, status: 'canceled' };
       }
 
       return { success: false, status: stripeIntent.status };
     } catch (error) {
-      throw new BadRequestException(`Failed to confirm payment: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to confirm payment: ${error.message}`,
+      );
     }
   }
 
@@ -202,8 +222,13 @@ export class StripePaymentService {
 
     const paymentIntent = await this.paymentIntentRepo.findByOrderId(orderId);
 
-    if (!paymentIntent || paymentIntent.paymentMethod !== PaymentMethod.STRIPE) {
-      throw new BadRequestException('Stripe payment intent not found for this order');
+    if (
+      !paymentIntent ||
+      paymentIntent.paymentMethod !== PaymentMethod.STRIPE
+    ) {
+      throw new BadRequestException(
+        'Stripe payment intent not found for this order',
+      );
     }
 
     if (!paymentIntent.stripePaymentIntentId) {
@@ -243,20 +268,22 @@ export class StripePaymentService {
         status: refund.status,
       };
     } catch (error) {
-      throw new BadRequestException(`Failed to refund payment: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to refund payment: ${error.message}`,
+      );
     }
   }
 
   async handleWebhook(event: Stripe.Event) {
     switch (event.type) {
       case 'payment_intent.succeeded':
-        await this.handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        await this.handlePaymentIntentSucceeded(event.data.object);
         break;
       case 'payment_intent.payment_failed':
-        await this.handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        await this.handlePaymentIntentFailed(event.data.object);
         break;
       case 'checkout.session.completed':
-        await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        await this.handleCheckoutSessionCompleted(event.data.object);
         break;
       default:
         console.log(`Unhandled event type: ${event.type}`);
@@ -264,8 +291,9 @@ export class StripePaymentService {
   }
 
   private async handlePaymentIntentSucceeded(intent: Stripe.PaymentIntent) {
-    const paymentIntent = await this.paymentIntentRepo.findByStripePaymentIntentId(intent.id);
-    
+    const paymentIntent =
+      await this.paymentIntentRepo.findByStripePaymentIntentId(intent.id);
+
     if (paymentIntent) {
       await this.paymentIntentRepo.updateStatus(
         paymentIntent._id.toString(),
@@ -276,13 +304,17 @@ export class StripePaymentService {
         },
       );
 
-      await this.finalizeSuccessfulPayment(paymentIntent.orderId.toString(), intent.id);
+      await this.finalizeSuccessfulPayment(
+        paymentIntent.orderId.toString(),
+        intent.id,
+      );
     }
   }
 
   private async handlePaymentIntentFailed(intent: Stripe.PaymentIntent) {
-    const paymentIntent = await this.paymentIntentRepo.findByStripePaymentIntentId(intent.id);
-    
+    const paymentIntent =
+      await this.paymentIntentRepo.findByStripePaymentIntentId(intent.id);
+
     if (paymentIntent) {
       await this.paymentIntentRepo.updateStatus(
         paymentIntent._id.toString(),
@@ -294,14 +326,18 @@ export class StripePaymentService {
     }
   }
 
-  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    const paymentIntent = await this.paymentIntentRepo.findByStripeSessionId(session.id);
-    
+  private async handleCheckoutSessionCompleted(
+    session: Stripe.Checkout.Session,
+  ) {
+    const paymentIntent = await this.paymentIntentRepo.findByStripeSessionId(
+      session.id,
+    );
+
     if (paymentIntent && session.payment_intent) {
       const intent = await this.stripe.paymentIntents.retrieve(
         session.payment_intent as string,
       );
-      
+
       if (intent.status === 'succeeded') {
         await this.paymentIntentRepo.updateStatus(
           paymentIntent._id.toString(),
@@ -313,7 +349,10 @@ export class StripePaymentService {
           },
         );
 
-        await this.finalizeSuccessfulPayment(paymentIntent.orderId.toString(), intent.id);
+        await this.finalizeSuccessfulPayment(
+          paymentIntent.orderId.toString(),
+          intent.id,
+        );
       }
     }
   }
@@ -325,7 +364,10 @@ export class StripePaymentService {
    * - Clear cart for the user
    * Guarded to avoid double processing on webhook retries.
    */
-  private async finalizeSuccessfulPayment(orderId: string, stripeIntentId?: string) {
+  private async finalizeSuccessfulPayment(
+    orderId: string,
+    stripeIntentId?: string,
+  ) {
     if (!this.orderRepo || !this.productRepo || !this.cartRepo) {
       return;
     }
@@ -340,7 +382,9 @@ export class StripePaymentService {
 
     // Deduct stock for each item (idempotent-ish: clamp at 0)
     for (const item of order.items) {
-      const product = await this.productRepo.findById({ id: item.productId.toString() });
+      const product = await this.productRepo.findById({
+        id: item.productId.toString(),
+      });
       if (product) {
         const newStock = Math.max(0, product.stock - item.quantity);
         await this.productRepo.findByIdAndUpdate({
@@ -353,7 +397,10 @@ export class StripePaymentService {
 
     // Increment coupon usage if coupon was used
     if (this.couponRepo && order.couponId) {
-      await this.couponRepo.incrementUsage(order.couponId, order.userId.toString());
+      await this.couponRepo.incrementUsage(
+        order.couponId,
+        order.userId.toString(),
+      );
     }
 
     // Clear cart for the user
@@ -369,4 +416,3 @@ export class StripePaymentService {
     });
   }
 }
-

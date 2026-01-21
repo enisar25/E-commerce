@@ -1,4 +1,12 @@
-export const template = ({otp, name, subject}:{otp:string,name:string,subject:string}) => `<!DOCTYPE html>
+export const template = ({
+  otp,
+  name,
+  subject,
+}: {
+  otp: string;
+  name: string;
+  subject: string;
+}) => `<!DOCTYPE html>
 <html>
 <head>
   <style>

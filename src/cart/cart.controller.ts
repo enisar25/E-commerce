@@ -11,7 +11,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { AuthGuard,type AuthRequest } from 'src/common/guards/auth.guard';
+import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { AddToCartDto } from './dto/add-to-cart.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { ApplyCouponDto } from 'src/coupon/dto/apply-coupon.dto';
@@ -55,7 +55,10 @@ export class CartController {
   }
 
   @Delete('item/:productId')
-  removeFromCart(@Req() req: AuthRequest, @Param('productId') productId: string) {
+  removeFromCart(
+    @Req() req: AuthRequest,
+    @Param('productId') productId: string,
+  ) {
     return this.cartService.removeFromCart(req.user._id.toString(), productId);
   }
 
@@ -67,7 +70,10 @@ export class CartController {
   @Post('apply-coupon')
   @UsePipes(new ZodPipe(applyCouponSchema))
   applyCoupon(@Req() req: AuthRequest, @Body() applyCouponDto: ApplyCouponDto) {
-    return this.cartService.applyCoupon(req.user._id.toString(), applyCouponDto.code);
+    return this.cartService.applyCoupon(
+      req.user._id.toString(),
+      applyCouponDto.code,
+    );
   }
 
   @Delete('remove-coupon')
@@ -75,4 +81,3 @@ export class CartController {
     return this.cartService.removeCoupon(req.user._id.toString());
   }
 }
-

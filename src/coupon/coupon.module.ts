@@ -12,4 +12,3 @@ import { UserModel } from 'src/user/user.model';
   exports: [CouponService, CouponRepo],
 })
 export class CouponModule {}
-

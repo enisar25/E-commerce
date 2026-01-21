@@ -1,12 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { BaseRepository } from "../database/repositories/base.repository";
-import { Model, Types } from "mongoose";
-import { InjectModel } from "@nestjs/mongoose";
-import { Order, OrderStatus } from "./order.model";
+import { Injectable } from '@nestjs/common';
+import { BaseRepository } from '../database/repositories/base.repository';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Order, OrderStatus } from './order.model';
 
 @Injectable()
 export class OrderRepo extends BaseRepository<Order> {
-  constructor(@InjectModel(Order.name) private readonly orderModel: Model<Order>) {
+  constructor(
+    @InjectModel(Order.name) private readonly orderModel: Model<Order>,
+  ) {
     super(orderModel);
   }
 
@@ -107,7 +109,11 @@ export class OrderRepo extends BaseRepository<Order> {
       });
   }
 
-  async updateStatus(id: string | Types.ObjectId, status: OrderStatus, additionalData?: any) {
+  async updateStatus(
+    id: string | Types.ObjectId,
+    status: OrderStatus,
+    additionalData?: any,
+  ) {
     const update: any = { status };
 
     if (status === OrderStatus.SHIPPED && !additionalData?.shippedAt) {
@@ -158,4 +164,3 @@ export class OrderRepo extends BaseRepository<Order> {
     };
   }
 }
-

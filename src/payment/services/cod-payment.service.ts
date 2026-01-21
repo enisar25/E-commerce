@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentIntentRepo } from '../payment.repo';
-import { PaymentIntent, PaymentMethod, PaymentIntentStatus } from '../payment.model';
+import { PaymentMethod, PaymentIntentStatus } from '../payment.model';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -39,8 +39,10 @@ export class CashOnDeliveryService {
   }
 
   async confirmPayment(paymentIntentId: string) {
-    const paymentIntent = await this.paymentIntentRepo.findById({ id: paymentIntentId });
-    
+    const paymentIntent = await this.paymentIntentRepo.findById({
+      id: paymentIntentId,
+    });
+
     if (!paymentIntent) {
       throw new Error('Payment intent not found');
     }
@@ -65,4 +67,3 @@ export class CashOnDeliveryService {
     };
   }
 }
-

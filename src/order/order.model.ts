@@ -1,5 +1,5 @@
-import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export enum OrderStatus {
   PENDING = 'PENDING',
@@ -102,7 +102,8 @@ export class ShippingAddress {
   phone?: string;
 }
 
-export const shippingAddressSchema = SchemaFactory.createForClass(ShippingAddress);
+export const shippingAddressSchema =
+  SchemaFactory.createForClass(ShippingAddress);
 
 @Schema({
   timestamps: true,
@@ -128,7 +129,7 @@ export class Order {
     type: [orderItemSchema],
     required: true,
     validate: {
-      validator: function(items: OrderItem[]) {
+      validator: function (items: OrderItem[]) {
         return items.length > 0;
       },
       message: 'Order must have at least one item',
@@ -279,4 +280,3 @@ export const OrderModel = MongooseModule.forFeature([
 
 export type HOrder = HydratedDocument<Order>;
 export type HOrderItem = HydratedDocument<OrderItem>;
-

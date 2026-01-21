@@ -50,12 +50,24 @@ import { validate } from './config/config.validator';
           uri,
           ...options,
           onConnectionCreate: (connection: Connection) => {
-            connection.on('connected', () => console.log('✅ Database connected'));
-            connection.on('open', () => console.log('✅ Database connection open'));
-            connection.on('disconnected', () => console.log('⚠️  Database disconnected'));
-            connection.on('reconnected', () => console.log('✅ Database reconnected'));
-            connection.on('disconnecting', () => console.log('⚠️  Database disconnecting'));
-            connection.on('error', (error) => console.error('❌ Database error:', error));
+            connection.on('connected', () =>
+              console.log('✅ Database connected'),
+            );
+            connection.on('open', () =>
+              console.log('✅ Database connection open'),
+            );
+            connection.on('disconnected', () =>
+              console.log('⚠️  Database disconnected'),
+            );
+            connection.on('reconnected', () =>
+              console.log('✅ Database reconnected'),
+            );
+            connection.on('disconnecting', () =>
+              console.log('⚠️  Database disconnecting'),
+            );
+            connection.on('error', (error) =>
+              console.error('❌ Database error:', error),
+            );
             return connection;
           },
         };

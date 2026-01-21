@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, MinLength, MaxLength, IsUrl, IsObject, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+  MaxLength,
+  IsUrl,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ImageDto {

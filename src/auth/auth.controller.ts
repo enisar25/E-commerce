@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, UsePipes, UseGuards, Req, Headers } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UsePipes,
+  UseGuards,
+  Req,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { ZodPipe } from 'src/common/pipes/zod.pipe';
@@ -40,7 +49,6 @@ export class AuthController {
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.password);
   }
-
 
   @Get('me')
   @UseGuards(AuthGuard)

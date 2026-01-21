@@ -1,4 +1,14 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, Min, MaxLength, ValidateNested, IsEnum, IsObject } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  Min,
+  MaxLength,
+  ValidateNested,
+  IsEnum,
+  IsObject,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ShippingAddressDto {
@@ -56,4 +66,3 @@ export class CheckoutDto {
   @IsOptional()
   cancelUrl?: string;
 }
-

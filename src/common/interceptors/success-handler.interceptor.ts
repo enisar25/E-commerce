@@ -2,7 +2,12 @@
  * Success Handler Interceptor
  * Standardizes successful API responses
  */
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { MESSAGES } from '../constants';
@@ -18,7 +23,11 @@ export class SuccessHandlerInterceptor implements NestInterceptor {
         }
 
         // Otherwise, wrap in standard format
-        const { data = res, message = MESSAGES.SUCCESS, statusCode = 200 } = res || {};
+        const {
+          data = res,
+          message = MESSAGES.SUCCESS,
+          statusCode = 200,
+        } = res || {};
         return {
           statusCode,
           message,

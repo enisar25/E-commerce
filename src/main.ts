@@ -41,7 +41,8 @@ async function bootstrap() {
         transformOptions: {
           enableImplicitConversion: true, // Enable implicit type conversion
         },
-        disableErrorMessages: configService.get<string>('nodeEnv') === 'production', // Hide error details in production
+        disableErrorMessages:
+          configService.get<string>('nodeEnv') === 'production', // Hide error details in production
       }),
     );
 
@@ -51,9 +52,16 @@ async function bootstrap() {
 
     await app.listen(port);
 
-    logger.log(`🚀 Application is running on: http://localhost:${port}/${apiPrefix}`);
+    logger.log(
+      `🚀 Application is running on: http://localhost:${port}/${apiPrefix}`,
+    );
     logger.log(`📦 Environment: ${nodeEnv}`);
-    const corsDisplay = corsOrigins === '*' ? 'all origins' : (Array.isArray(corsOrigins) ? corsOrigins.join(', ') : corsOrigins || 'none');
+    const corsDisplay =
+      corsOrigins === '*'
+        ? 'all origins'
+        : Array.isArray(corsOrigins)
+          ? corsOrigins.join(', ')
+          : corsOrigins || 'none';
     logger.log(`🌍 CORS enabled for: ${corsDisplay}`);
   } catch (error) {
     logger.error('❌ Error starting application', error);

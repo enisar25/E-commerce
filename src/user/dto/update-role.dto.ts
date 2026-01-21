@@ -7,4 +7,3 @@ export class UpdateRoleDto {
   })
   role: UserRole;
 }
-

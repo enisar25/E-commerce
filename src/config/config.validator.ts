@@ -19,14 +19,13 @@ export function validate(config: Record<string, unknown>) {
         path: err.path.join('.'),
         message: err.message,
       }));
-      
+
       const formattedErrors = errorMessages
         .map((e) => `  - ${e.path}: ${e.message}`)
         .join('\n');
-      
+
       throw new Error(`Configuration validation failed:\n${formattedErrors}`);
     }
     throw error;
   }
 }
-

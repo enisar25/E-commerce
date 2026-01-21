@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { ProductRepo } from './product.repo';
 import { Types } from 'mongoose';
 import fs from 'fs/promises';
@@ -35,8 +40,9 @@ export class ProductService {
   constructor(private readonly productRepo: ProductRepo) {}
 
   async create(payload: CreateProductPayload) {
-
-    const isExisting = await this.productRepo.findOne({filter:{ name: payload.name }});
+    const isExisting = await this.productRepo.findOne({
+      filter: { name: payload.name },
+    });
     if (isExisting) {
       throw new BadRequestException('Product with this name already exists');
     }
@@ -143,12 +149,12 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-    
+
     // Populate related fields
     await product.populate('brandId', 'name image');
     await product.populate('categoryId', 'name image');
     await product.populate('createdBy', 'name email');
-    
+
     return {
       statusCode: 200,
       message: 'Product fetched successfully',
@@ -157,24 +163,33 @@ export class ProductService {
   }
 
   async update(id: string, payload: UpdateProductPayload, user: HUser) {
-
     const product = await this.productRepo.findById({ id });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
     // Check if user is admin or the product owner
-    if (user.role !== UserRole.ADMIN && product.createdBy.toString() !== user._id.toString()) {
+    if (
+      user.role !== UserRole.ADMIN &&
+      product.createdBy.toString() !== user._id.toString()
+    ) {
       throw new ForbiddenException('You can only update your own products');
     }
 
     // Delete old images if new ones are provided
-    if (payload.images && payload.images.length > 0 && product.images && product.images.length > 0) {
-        for (const image of product.images) {
-            if (image.filename) {
-                await fs.unlink(`./uploads/products/${image.filename}`).catch((err)=>console.log('Error deleting file:', err))
-            }
+    if (
+      payload.images &&
+      payload.images.length > 0 &&
+      product.images &&
+      product.images.length > 0
+    ) {
+      for (const image of product.images) {
+        if (image.filename) {
+          await fs
+            .unlink(`./uploads/products/${image.filename}`)
+            .catch((err) => console.log('Error deleting file:', err));
         }
+      }
     }
 
     const updated = await this.productRepo.findByIdAndUpdate({
@@ -205,8 +220,13 @@ export class ProductService {
     }
 
     // Check if user is admin or the product owner
-    if (user.role !== UserRole.ADMIN && product.createdBy.toString() !== user._id.toString()) {
-      throw new ForbiddenException('You can only update stock for your own products');
+    if (
+      user.role !== UserRole.ADMIN &&
+      product.createdBy.toString() !== user._id.toString()
+    ) {
+      throw new ForbiddenException(
+        'You can only update stock for your own products',
+      );
     }
 
     const updated = await this.productRepo.findByIdAndUpdate({
@@ -228,7 +248,9 @@ export class ProductService {
 
   async applyDiscount(id: string, discount: number, user: HUser) {
     if (typeof discount !== 'number' || discount < 0 || discount > 100) {
-      throw new BadRequestException('Discount must be a number between 0 and 100');
+      throw new BadRequestException(
+        'Discount must be a number between 0 and 100',
+      );
     }
 
     const product = await this.productRepo.findById({ id });
@@ -237,8 +259,13 @@ export class ProductService {
     }
 
     // Check if user is admin or the product owner
-    if (user.role !== UserRole.ADMIN && product.createdBy.toString() !== user._id.toString()) {
-      throw new ForbiddenException('You can only apply discounts to your own products');
+    if (
+      user.role !== UserRole.ADMIN &&
+      product.createdBy.toString() !== user._id.toString()
+    ) {
+      throw new ForbiddenException(
+        'You can only apply discounts to your own products',
+      );
     }
 
     if (product.discount === discount) {

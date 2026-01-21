@@ -5,20 +5,11 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { OrderRepo } from './order.repo';
-import { CartRepo } from 'src/cart/cart.repo';
 import { ProductRepo } from 'src/product/product.repo';
-import { CouponRepo } from 'src/coupon/coupon.repo';
 import { Types } from 'mongoose';
-import { OrderStatus, OrderItem, ShippingAddress } from './order.model';
-import { generateOrderNumber } from 'src/common/utils/order-number';
+import { OrderStatus } from './order.model';
 import { HUser } from 'src/user/user.model';
 import { UserRole } from 'src/common/enums/roles.enum';
-
-interface CreateOrderPayload {
-  shippingAddress: ShippingAddress;
-  shippingCost?: number;
-  notes?: string;
-}
 
 interface UpdateOrderStatusPayload {
   status: OrderStatus;
@@ -32,7 +23,12 @@ export class OrderService {
     private readonly productRepo: ProductRepo,
   ) {}
 
-  async findAll(userId: string, page?: number, limit?: number, status?: OrderStatus) {
+  async findAll(
+    userId: string,
+    page?: number,
+    limit?: number,
+    status?: OrderStatus,
+  ) {
     const pageNum = page ? Math.max(1, page) : 1;
     const limitNum = limit ? Math.max(1, Math.min(100, limit)) : 10;
 
@@ -133,9 +129,14 @@ export class OrderService {
     }
 
     // If cancelling, restore product stock
-    if (payload.status === OrderStatus.CANCELLED && order.status !== OrderStatus.CANCELLED) {
+    if (
+      payload.status === OrderStatus.CANCELLED &&
+      order.status !== OrderStatus.CANCELLED
+    ) {
       for (const item of order.items) {
-        const product = await this.productRepo.findById({ id: item.productId.toString() });
+        const product = await this.productRepo.findById({
+          id: item.productId.toString(),
+        });
         if (product) {
           await this.productRepo.findByIdAndUpdate({
             id: product._id.toString(),
@@ -186,7 +187,9 @@ export class OrderService {
 
     // Restore product stock
     for (const item of order.items) {
-      const product = await this.productRepo.findById({ id: item.productId.toString() });
+      const product = await this.productRepo.findById({
+        id: item.productId.toString(),
+      });
       if (product) {
         await this.productRepo.findByIdAndUpdate({
           id: product._id.toString(),
@@ -196,9 +199,13 @@ export class OrderService {
       }
     }
 
-    const updated = await this.orderRepo.updateStatus(id, OrderStatus.CANCELLED, {
-      cancellationReason,
-    });
+    const updated = await this.orderRepo.updateStatus(
+      id,
+      OrderStatus.CANCELLED,
+      {
+        cancellationReason,
+      },
+    );
 
     if (!updated) {
       throw new NotFoundException('Order not found');
@@ -225,4 +232,3 @@ export class OrderService {
     };
   }
 }
-

@@ -7,4 +7,3 @@ export class ApplyCouponDto {
   @MaxLength(50, { message: 'Coupon code cannot exceed 50 characters' })
   code: string;
 }
-

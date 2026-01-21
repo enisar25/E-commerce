@@ -23,13 +23,8 @@ export const getMulterOptions = (
   {
     maxSize = 5 * 1024 * 1024,
     maxFiles = 10,
-    allowedMimeTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/webp',
-      'image/gif',
-    ],
-  }: DiskStorageOptions = {}
+    allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+  }: DiskStorageOptions = {},
 ) => ({
   storage: disk(path),
   fileFilter: createFileFilter({ allowedMimeTypes }),

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Patch,
   Body,
   Param,
@@ -15,10 +14,9 @@ import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
-import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ZodPipe } from 'src/common/pipes/zod.pipe';
-import { createOrderSchema, updateOrderStatusSchema } from './validation';
+import { updateOrderStatusSchema } from './validation';
 import { OrderStatus } from './order.model';
 
 @Controller('order')
@@ -111,4 +109,3 @@ export class OrderController {
     );
   }
 }
-

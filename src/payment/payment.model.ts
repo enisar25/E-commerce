@@ -137,4 +137,3 @@ export const PaymentIntentModel = MongooseModule.forFeature([
 ]);
 
 export type HPaymentIntent = HydratedDocument<PaymentIntent>;
-

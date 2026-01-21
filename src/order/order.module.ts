@@ -15,10 +15,30 @@ import { CheckoutController } from './checkout/checkout.controller';
 import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
-  imports: [OrderModel, CartModel, ProductModel, CouponModel, UserModel, forwardRef(() => PaymentModule)],
+  imports: [
+    OrderModel,
+    CartModel,
+    ProductModel,
+    CouponModel,
+    UserModel,
+    forwardRef(() => PaymentModule),
+  ],
   controllers: [OrderController, CheckoutController],
-  providers: [OrderService, OrderRepo, CartRepo, ProductRepo, CouponRepo, CheckoutService],
-  exports: [OrderService, OrderRepo, CheckoutService, CartRepo, ProductRepo, CouponRepo],
+  providers: [
+    OrderService,
+    OrderRepo,
+    CartRepo,
+    ProductRepo,
+    CouponRepo,
+    CheckoutService,
+  ],
+  exports: [
+    OrderService,
+    OrderRepo,
+    CheckoutService,
+    CartRepo,
+    ProductRepo,
+    CouponRepo,
+  ],
 })
 export class OrderModule {}
-

@@ -10,7 +10,13 @@ import { ProductRepo } from './product.repo';
 import { JwtGlobalModule } from 'src/common/modules/jwt.module';
 
 @Module({
-  imports: [UserModel, BrandModel, CategoryModel, ProductModel, JwtGlobalModule],
+  imports: [
+    UserModel,
+    BrandModel,
+    CategoryModel,
+    ProductModel,
+    JwtGlobalModule,
+  ],
   controllers: [ProductController],
   providers: [ProductService, UserRepo, ProductRepo],
 })

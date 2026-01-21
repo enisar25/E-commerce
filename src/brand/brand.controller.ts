@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, UsePipes } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  UploadedFile,
+  UsePipes,
+} from '@nestjs/common';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { AuthGuard,type AuthRequest } from 'src/common/guards/auth.guard';
+import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
@@ -21,7 +34,9 @@ export class BrandController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @UsePipes(new ZodPipe(createBrandSchema))
-  @UseInterceptors(FileInterceptor('image', getMulterOptions('./uploads/brands')))
+  @UseInterceptors(
+    FileInterceptor('image', getMulterOptions('./uploads/brands')),
+  )
   async create(
     @Req() req: AuthRequest,
     @Body() createBrandDto: CreateBrandDto,
@@ -54,9 +69,14 @@ export class BrandController {
   @UsePipes(new ZodPipe(updateBrandSchema))
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('image', getMulterOptions('./uploads/brands', { maxSize: 5 * 1024 * 1024 })))
+  @UseInterceptors(
+    FileInterceptor(
+      'image',
+      getMulterOptions('./uploads/brands', { maxSize: 5 * 1024 * 1024 }),
+    ),
+  )
   update(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() updateBrandDto: UpdateBrandDto,
     @UploadedFile() file: Express.Multer.File,
   ) {

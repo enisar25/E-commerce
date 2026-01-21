@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CategoryRepo } from './category.repo';
 import { Types } from 'mongoose';
 import fs from 'fs/promises';
@@ -22,7 +26,9 @@ export class CategoryService {
   constructor(private readonly categoryRepo: CategoryRepo) {}
 
   async create(payload: CreateCategoryPayload) {
-    const isExisting = await this.categoryRepo.findOne({filter:{ name: payload.name }});
+    const isExisting = await this.categoryRepo.findOne({
+      filter: { name: payload.name },
+    });
     if (isExisting) {
       throw new BadRequestException('Category with this name already exists');
     }
@@ -62,7 +68,6 @@ export class CategoryService {
   }
 
   async update(id: string, payload: UpdateCategoryPayload) {
-
     const category = await this.categoryRepo.findById({ id });
     if (!category) {
       throw new NotFoundException('Category not found');
@@ -74,7 +79,9 @@ export class CategoryService {
 
     // Delete old image if new one is provided
     if (payload.image && category.image && category.image.filename) {
-        await fs.unlink(`./uploads/categories/${category.image.filename}`).catch((err)=>console.log('Error deleting file:', err))
+      await fs
+        .unlink(`./uploads/categories/${category.image.filename}`)
+        .catch((err) => console.log('Error deleting file:', err));
     }
 
     const updated = await this.categoryRepo.findByIdAndUpdate({
@@ -111,7 +118,7 @@ export class CategoryService {
   async addBrandToCategory(categoryId: string, brandId: string) {
     const category = await this.categoryRepo.addBrandToCategory(
       categoryId,
-      new Types.ObjectId(brandId)
+      new Types.ObjectId(brandId),
     );
 
     if (!category) {
@@ -128,7 +135,7 @@ export class CategoryService {
   async removeBrandFromCategory(categoryId: string, brandId: string) {
     const category = await this.categoryRepo.removeBrandFromCategory(
       categoryId,
-      new Types.ObjectId(brandId)
+      new Types.ObjectId(brandId),
     );
 
     if (!category) {

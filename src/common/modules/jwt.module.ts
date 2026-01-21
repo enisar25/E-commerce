@@ -34,4 +34,3 @@ import { JwtService } from '../utils/security/token';
   exports: [JwtService, JwtModule],
 })
 export class JwtGlobalModule {}
-

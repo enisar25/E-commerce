@@ -36,4 +36,3 @@ export class Image {
 
 export const imageSchema = SchemaFactory.createForClass(Image);
 export type ImageDocument = HydratedDocument<Image>;
-

@@ -58,11 +58,15 @@ export class CheckoutService {
       });
 
       if (!product) {
-        throw new NotFoundException(`Product ${String(cartItem.productId)} not found`);
+        throw new NotFoundException(
+          `Product ${String(cartItem.productId)} not found`,
+        );
       }
 
       if (!product.isActive) {
-        throw new BadRequestException(`Product ${product.name} is no longer available`);
+        throw new BadRequestException(
+          `Product ${product.name} is no longer available`,
+        );
       }
 
       if (product.stock < cartItem.quantity) {
@@ -109,49 +113,57 @@ export class CheckoutService {
 
     // Create payment intent based on payment method
     let paymentIntentResult: any;
-    const frontendUrl = this.configService.get<string>('frontend.url') || 'http://localhost:3000';
+    const frontendUrl =
+      this.configService.get<string>('frontend.url') || 'http://localhost:3000';
 
     switch (payload.paymentMethod) {
       case PaymentMethod.STRIPE:
         // Use checkout session for better UX
-        paymentIntentResult = await this.stripePaymentService.createCheckoutSession(
-          order._id.toString(),
-          userId,
-          total,
-          'USD',
-          payload.successUrl || `${frontendUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-          payload.cancelUrl || `${frontendUrl}/checkout/cancel`,
-          {
-            orderNumber: order.orderNumber,
-          },
-        );
+        paymentIntentResult =
+          await this.stripePaymentService.createCheckoutSession(
+            order._id.toString(),
+            userId,
+            total,
+            'USD',
+            payload.successUrl ||
+              `${frontendUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+            payload.cancelUrl || `${frontendUrl}/checkout/cancel`,
+            {
+              orderNumber: order.orderNumber,
+            },
+          );
 
         // Update order with Stripe session ID
         await this.orderRepo.findByIdAndUpdate({
           id: order._id.toString(),
           update: {
             stripeCheckoutSessionId: paymentIntentResult.sessionId,
-            paymentIntentId: new Types.ObjectId(paymentIntentResult.paymentIntentId),
+            paymentIntentId: new Types.ObjectId(
+              paymentIntentResult.paymentIntentId,
+            ),
           },
         });
         break;
 
       case PaymentMethod.COD:
-        paymentIntentResult = await this.cashOnDeliveryService.createPaymentIntent(
-          order._id.toString(),
-          userId,
-          total,
-          'USD',
-          {
-            orderNumber: order.orderNumber,
-          },
-        );
+        paymentIntentResult =
+          await this.cashOnDeliveryService.createPaymentIntent(
+            order._id.toString(),
+            userId,
+            total,
+            'USD',
+            {
+              orderNumber: order.orderNumber,
+            },
+          );
 
         // Update order with payment intent ID
         await this.orderRepo.findByIdAndUpdate({
           id: order._id.toString(),
           update: {
-            paymentIntentId: new Types.ObjectId(paymentIntentResult.paymentIntentId),
+            paymentIntentId: new Types.ObjectId(
+              paymentIntentResult.paymentIntentId,
+            ),
             paymentStatus: 'PENDING', // COD is always pending until delivery
           },
         });
@@ -187,7 +199,9 @@ export class CheckoutService {
     }
 
     // Populate order
-    const populatedOrder = await this.orderRepo.findByIdWithPopulate(order._id.toString());
+    const populatedOrder = await this.orderRepo.findByIdWithPopulate(
+      order._id.toString(),
+    );
 
     return {
       statusCode: 201,
@@ -198,7 +212,4 @@ export class CheckoutService {
       },
     };
   }
-
-
 }
-

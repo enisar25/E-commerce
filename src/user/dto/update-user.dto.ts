@@ -10,4 +10,3 @@ export class UpdateUserDto {
   @IsOptional()
   age?: number;
 }
-

@@ -1,5 +1,5 @@
-import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export enum DiscountType {
   PERCENTAGE = 'PERCENTAGE',
@@ -130,4 +130,3 @@ export const CouponModel = MongooseModule.forFeature([
 ]);
 
 export type HCoupon = HydratedDocument<Coupon>;
-

@@ -7,4 +7,3 @@ export class UpdateCouponDto extends PartialType(CreateCouponDto) {
   @IsOptional()
   isActive?: boolean;
 }
-

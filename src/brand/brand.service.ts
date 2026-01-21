@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { BrandRepo } from './brand.repo';
 import { Types } from 'mongoose';
 import fs from 'fs/promises';
@@ -59,7 +63,6 @@ export class BrandService {
   }
 
   async update(id: string, payload: UpdateBrandPayload) {
-
     const brand = await this.brandRepo.findById({ id });
     if (!brand) {
       throw new NotFoundException('Brand not found');
@@ -71,7 +74,9 @@ export class BrandService {
 
     // Delete old image if new one is provided
     if (payload.image && brand.image && brand.image.filename) {
-        await fs.unlink(`./uploads/brands/${brand.image.filename}`).catch((err)=>console.log('Error deleting file:', err))
+      await fs
+        .unlink(`./uploads/brands/${brand.image.filename}`)
+        .catch((err) => console.log('Error deleting file:', err));
     }
 
     const updated = await this.brandRepo.findByIdAndUpdate({

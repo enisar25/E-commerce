@@ -1,4 +1,15 @@
-import { IsNotEmpty, IsString, IsEnum, IsNumber, IsDateString, IsOptional, Min, Max, MinLength, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsOptional,
+  Min,
+  Max,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { DiscountType } from '../coupon.model';
 
 export class CreateCouponDto {
@@ -13,7 +24,9 @@ export class CreateCouponDto {
   @MaxLength(200, { message: 'Description cannot exceed 200 characters' })
   description: string;
 
-  @IsEnum(DiscountType, { message: 'Discount type must be PERCENTAGE or FIXED' })
+  @IsEnum(DiscountType, {
+    message: 'Discount type must be PERCENTAGE or FIXED',
+  })
   @IsNotEmpty()
   discountType: DiscountType;
 
@@ -51,4 +64,3 @@ export class CreateCouponDto {
   @Min(1, { message: 'Per user limit must be at least 1' })
   perUserLimit?: number;
 }
-

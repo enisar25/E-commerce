@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, Min, MaxLength, ValidateNested, IsObject } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  Min,
+  MaxLength,
+  ValidateNested,
+  IsObject,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ShippingAddressDto {
@@ -44,4 +53,3 @@ export class CreateOrderDto {
   @MaxLength(500, { message: 'Notes cannot exceed 500 characters' })
   notes?: string;
 }
-

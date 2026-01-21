@@ -41,7 +41,9 @@ export class PaymentWebhookController {
       };
     }
 
-    const webhookSecret = this.configService.get<string>('stripe.webhookSecret');
+    const webhookSecret = this.configService.get<string>(
+      'stripe.webhookSecret',
+    );
 
     if (!webhookSecret) {
       console.warn('Stripe webhook secret is not configured');
@@ -82,4 +84,3 @@ export class PaymentWebhookController {
     }
   }
 }
-

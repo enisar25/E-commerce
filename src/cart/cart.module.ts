@@ -17,4 +17,3 @@ import { JwtGlobalModule } from 'src/common/modules/jwt.module';
   exports: [CartService, CartRepo],
 })
 export class CartModule {}
-

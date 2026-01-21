@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { BaseRepository } from "../database/repositories/base.repository";
-import { Model, Types } from "mongoose";
-import { InjectModel } from "@nestjs/mongoose";
-import { Cart } from "./cart.model";
+import { Injectable } from '@nestjs/common';
+import { BaseRepository } from '../database/repositories/base.repository';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Cart } from './cart.model';
 
 @Injectable()
 export class CartRepo extends BaseRepository<Cart> {
@@ -43,11 +43,11 @@ export class CartRepo extends BaseRepository<Cart> {
   }
 
   async createOrUpdate(userId: string | Types.ObjectId, update: any) {
-    return this.cartModel.findOneAndUpdate(
-      { userId, isActive: true },
-      update,
-      { upsert: true, new: true, setDefaultsOnInsert: true },
-    );
+    return this.cartModel.findOneAndUpdate({ userId, isActive: true }, update, {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    });
   }
 
   async clearCart(userId: string | Types.ObjectId) {
@@ -67,4 +67,3 @@ export class CartRepo extends BaseRepository<Cart> {
     );
   }
 }
-

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService as JWT, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
+import {
+  JwtService as JWT,
+  JwtSignOptions,
+  JwtVerifyOptions,
+} from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 export interface JwtPayload {
@@ -71,7 +75,6 @@ export class JwtService {
       ...options,
     };
 
-    return this.jwtService.verify(token, verifyOptions) as T;
+    return this.jwtService.verify(token, verifyOptions);
   }
-
 }

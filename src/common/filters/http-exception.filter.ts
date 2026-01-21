@@ -49,7 +49,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         stack,
       );
     } else {
-      this.logger.warn(`${request.method} ${request.url} - ${status} - ${message}`);
+      this.logger.warn(
+        `${request.method} ${request.url} - ${status} - ${message}`,
+      );
     }
 
     const errorResponse: any = {

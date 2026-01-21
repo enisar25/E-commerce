@@ -5,4 +5,3 @@ export enum UserRole {
 }
 
 export const DEFAULT_ROLE = UserRole.CUSTOMER;
-

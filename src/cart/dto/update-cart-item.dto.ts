@@ -7,4 +7,3 @@ export class UpdateCartItemDto {
   @Max(100, { message: 'Quantity cannot exceed 100' })
   quantity: number;
 }
-

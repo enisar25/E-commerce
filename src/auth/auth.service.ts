@@ -2,7 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignUpDto } from './dto/signup.dto';
 import { UserRepo } from 'src/user/user.repo';
 import { OTPTypeEnum } from 'src/otp/otp.model';
-import { emailEmmiter, EmailEventsEnum } from 'src/common/utils/email/email.events';
+import {
+  emailEmmiter,
+  EmailEventsEnum,
+} from 'src/common/utils/email/email.events';
 import { OTPService } from 'src/otp/otp.service';
 import { template } from 'src/common/utils/email/createHtml';
 import { JwtService } from 'src/common/utils/security/token';
@@ -16,45 +19,54 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-    async signup(data: SignUpDto) {
-      const {age,email,name,password} = data
-      const isExist = await this.userRepo.findByEmail(email)
-      if(isExist){
-        throw new BadRequestException('Email already exists')
-      }
-      const user = await this.userRepo.create({
-        email,
-        name,
-        password: await hashData(password),
-        age,
-        role: DEFAULT_ROLE
-      })
-
-      const otp = await this.otpService.createOTP(user._id, OTPTypeEnum.VERIFY_EMAIL)
-      const subject = 'verify your email'
-      const html = template({ otp, name, subject })
-      emailEmmiter.publish(EmailEventsEnum.VERIFY_EMAIL,{
-        to:email, subject, html
-      })
-
-      return {
-        statusCode: 201,
-        message: 'Signup successful, verification OTP sent',
-        data: user,
-      };
+  async signup(data: SignUpDto) {
+    const { age, email, name, password } = data;
+    const isExist = await this.userRepo.findByEmail(email);
+    if (isExist) {
+      throw new BadRequestException('Email already exists');
     }
+    const user = await this.userRepo.create({
+      email,
+      name,
+      password: await hashData(password),
+      age,
+      role: DEFAULT_ROLE,
+    });
+
+    const otp = await this.otpService.createOTP(
+      user._id,
+      OTPTypeEnum.VERIFY_EMAIL,
+    );
+    const subject = 'verify your email';
+    const html = template({ otp, name, subject });
+    emailEmmiter.publish(EmailEventsEnum.VERIFY_EMAIL, {
+      to: email,
+      subject,
+      html,
+    });
+
+    return {
+      statusCode: 201,
+      message: 'Signup successful, verification OTP sent',
+      data: user,
+    };
+  }
 
   async confirmEmail(email: string, otp: string) {
     const user = await this.userRepo.findByEmail(email);
     if (!user) {
       throw new BadRequestException('User not found');
     }
-    const isOtpValid = await this.otpService.validateOTP(user._id, OTPTypeEnum.VERIFY_EMAIL, otp);
+    const isOtpValid = await this.otpService.validateOTP(
+      user._id,
+      OTPTypeEnum.VERIFY_EMAIL,
+      otp,
+    );
     if (!isOtpValid) {
       throw new BadRequestException('Invalid or expired OTP');
     }
     const updated = await this.userRepo.verifyUserEmail(user._id);
-    if(!updated){
+    if (!updated) {
       throw new BadRequestException('Email verification failed');
     }
     await this.otpService.deleteOTP(user._id, OTPTypeEnum.VERIFY_EMAIL, otp);
@@ -70,13 +82,16 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('User not found');
     }
-    const otp = await this.otpService.resendOTP(user._id, OTPTypeEnum.VERIFY_EMAIL);
+    const otp = await this.otpService.resendOTP(
+      user._id,
+      OTPTypeEnum.VERIFY_EMAIL,
+    );
     const subject = 'verify your email';
     const html = template({ otp, name: user.name, subject });
     emailEmmiter.publish(EmailEventsEnum.VERIFY_EMAIL, {
       to: email,
       subject,
-      html
+      html,
     });
     return {
       statusCode: 200,
@@ -107,5 +122,4 @@ export class AuthService {
       },
     };
   }
-
 }

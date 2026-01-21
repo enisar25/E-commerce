@@ -1,8 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFiles, UsePipes, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  UploadedFiles,
+  UsePipes,
+  Query,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AuthGuard,type AuthRequest } from 'src/common/guards/auth.guard';
+import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
@@ -21,22 +35,31 @@ export class ProductController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.SELLER, UserRole.ADMIN)
   @UsePipes(new ZodPipe(createProductSchema))
-  @UseInterceptors(FilesInterceptor('images', 10, getMulterOptions('./uploads/products', { maxSize: 5 * 1024 * 1024 })))
+  @UseInterceptors(
+    FilesInterceptor(
+      'images',
+      10,
+      getMulterOptions('./uploads/products', { maxSize: 5 * 1024 * 1024 }),
+    ),
+  )
   async create(
     @Req() req: AuthRequest,
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     // Convert uploaded files to Image objects, or use provided images from DTO
-    const images = files && files.length > 0
-      ? createImagesFromFiles(files, '/uploads/products')
-      : createProductDto.images || [];
+    const images =
+      files && files.length > 0
+        ? createImagesFromFiles(files, '/uploads/products')
+        : createProductDto.images || [];
 
     return this.productService.create({
       name: createProductDto.name,
       description: createProductDto.description,
       price: Number(createProductDto.price),
-      discount: createProductDto.discount ? Number(createProductDto.discount) : 0,
+      discount: createProductDto.discount
+        ? Number(createProductDto.discount)
+        : 0,
       stock: Number(createProductDto.stock),
       brandId: createProductDto.brandId,
       categoryId: createProductDto.categoryId,
@@ -79,16 +102,25 @@ export class ProductController {
   @UsePipes(new ZodPipe(updateProductSchema))
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.SELLER, UserRole.ADMIN)
-  @UseInterceptors(FilesInterceptor('images', 10, getMulterOptions('./uploads/products', { maxSize: 5 * 1024 * 1024 })))
+  @UseInterceptors(
+    FilesInterceptor(
+      'images',
+      10,
+      getMulterOptions('./uploads/products', { maxSize: 5 * 1024 * 1024 }),
+    ),
+  )
   update(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFiles() files: Express.Multer.File[],
     @Req() req: AuthRequest,
   ) {
     // Convert uploaded files to Image objects, or use provided images from DTO
     if (files && files.length > 0) {
-      updateProductDto.images = createImagesFromFiles(files, '/uploads/products');
+      updateProductDto.images = createImagesFromFiles(
+        files,
+        '/uploads/products',
+      );
     }
     return this.productService.update(id, updateProductDto, req.user);
   }

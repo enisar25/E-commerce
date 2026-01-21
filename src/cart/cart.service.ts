@@ -26,7 +26,11 @@ export class CartService {
     private readonly couponService: CouponService,
   ) {}
 
-  private calculateItemTotal(price: number, discount: number, quantity: number): number {
+  private calculateItemTotal(
+    price: number,
+    discount: number,
+    quantity: number,
+  ): number {
     const discountedPrice = price * (1 - discount / 100);
     return discountedPrice * quantity;
   }
@@ -37,7 +41,11 @@ export class CartService {
     let itemCount = 0;
 
     items.forEach((item) => {
-      const itemTotal = this.calculateItemTotal(item.price, item.discount, item.quantity);
+      const itemTotal = this.calculateItemTotal(
+        item.price,
+        item.discount,
+        item.quantity,
+      );
       subtotal += itemTotal;
       // Calculate discount amount: original price - discounted price
       const originalTotal = item.price * item.quantity;
@@ -95,10 +103,14 @@ export class CartService {
 
     for (const item of cart.items) {
       const product = item.productId as any;
-      
+
       // Check if product is populated (has _id property means it's a populated document)
-      const isPopulated = product && typeof product === 'object' && '_id' in product && 'isActive' in product;
-      
+      const isPopulated =
+        product &&
+        typeof product === 'object' &&
+        '_id' in product &&
+        'isActive' in product;
+
       if (!isPopulated) {
         // If not populated, keep it (will be checked on next request or when adding)
         validItems.push(item);
@@ -121,9 +133,10 @@ export class CartService {
       const itemsToSave = validItems.map((item: any) => {
         const productId = item.productId?._id || item.productId;
         return {
-          productId: productId instanceof Types.ObjectId 
-            ? productId 
-            : new Types.ObjectId(productId.toString()),
+          productId:
+            productId instanceof Types.ObjectId
+              ? productId
+              : new Types.ObjectId(productId.toString()),
           quantity: item.quantity,
           price: item.price,
           discount: item.discount,
@@ -131,7 +144,10 @@ export class CartService {
         };
       });
 
-      const totals = this.calculateCartTotals(itemsToSave, cart.couponDiscount || 0);
+      const totals = this.calculateCartTotals(
+        itemsToSave,
+        cart.couponDiscount || 0,
+      );
       cart = await this.cartRepo.findByIdAndUpdate({
         id: cart._id.toString(),
         update: {
@@ -140,7 +156,7 @@ export class CartService {
         },
         options: { new: true },
       });
-      
+
       if (cart) {
         await cart.populate({
           path: 'items.productId',
@@ -151,14 +167,20 @@ export class CartService {
           ],
         });
         if (cart.couponId) {
-          await cart.populate('couponId', 'code description discountType discountValue');
+          await cart.populate(
+            'couponId',
+            'code description discountType discountValue',
+          );
         }
       }
     }
 
     // Populate coupon if exists
     if (cart && cart.couponId) {
-      await cart.populate('couponId', 'code description discountType discountValue');
+      await cart.populate(
+        'couponId',
+        'code description discountType discountValue',
+      );
     }
 
     return {
@@ -224,7 +246,11 @@ export class CartService {
       );
     } else {
       // Add new item
-      const itemTotal = this.calculateItemTotal(product.price, product.discount, payload.quantity);
+      const itemTotal = this.calculateItemTotal(
+        product.price,
+        product.discount,
+        payload.quantity,
+      );
       cart.items.push({
         productId: new Types.ObjectId(payload.productId),
         quantity: payload.quantity,
@@ -235,7 +261,10 @@ export class CartService {
     }
 
     // Recalculate cart totals (preserve coupon discount if exists)
-    const totals = this.calculateCartTotals(cart.items, cart.couponDiscount || 0);
+    const totals = this.calculateCartTotals(
+      cart.items,
+      cart.couponDiscount || 0,
+    );
 
     const updatedCart = await this.cartRepo.findByIdAndUpdate({
       id: cart._id.toString(),
@@ -258,9 +287,12 @@ export class CartService {
         { path: 'categoryId', select: 'name image' },
       ],
     });
-    
+
     if (updatedCart.couponId) {
-      await updatedCart.populate('couponId', 'code description discountType discountValue');
+      await updatedCart.populate(
+        'couponId',
+        'code description discountType discountValue',
+      );
     }
 
     return {
@@ -270,7 +302,11 @@ export class CartService {
     };
   }
 
-  async updateCartItem(userId: string, productId: string, payload: UpdateCartItemPayload) {
+  async updateCartItem(
+    userId: string,
+    productId: string,
+    payload: UpdateCartItemPayload,
+  ) {
     const cart = await this.cartRepo.findByUserId(userId);
 
     if (!cart) {
@@ -307,7 +343,10 @@ export class CartService {
     );
 
     // Recalculate cart totals (preserve coupon discount if exists)
-    const totals = this.calculateCartTotals(cart.items, cart.couponDiscount || 0);
+    const totals = this.calculateCartTotals(
+      cart.items,
+      cart.couponDiscount || 0,
+    );
 
     const updatedCart = await this.cartRepo.findByIdAndUpdate({
       id: cart._id.toString(),
@@ -330,9 +369,12 @@ export class CartService {
         { path: 'categoryId', select: 'name image' },
       ],
     });
-    
+
     if (updatedCart.couponId) {
-      await updatedCart.populate('couponId', 'code description discountType discountValue');
+      await updatedCart.populate(
+        'couponId',
+        'code description discountType discountValue',
+      );
     }
 
     return {
@@ -361,7 +403,10 @@ export class CartService {
     cart.items.splice(itemIndex, 1);
 
     // Recalculate cart totals (preserve coupon discount if exists)
-    const totals = this.calculateCartTotals(cart.items, cart.couponDiscount || 0);
+    const totals = this.calculateCartTotals(
+      cart.items,
+      cart.couponDiscount || 0,
+    );
 
     const updatedCart = await this.cartRepo.findByIdAndUpdate({
       id: cart._id.toString(),
@@ -384,9 +429,12 @@ export class CartService {
         { path: 'categoryId', select: 'name image' },
       ],
     });
-    
+
     if (updatedCart.couponId) {
-      await updatedCart.populate('couponId', 'code description discountType discountValue');
+      await updatedCart.populate(
+        'couponId',
+        'code description discountType discountValue',
+      );
     }
 
     return {
@@ -429,7 +477,10 @@ export class CartService {
       };
     }
 
-    const totals = this.calculateCartTotals(cart.items, cart.couponDiscount || 0);
+    const totals = this.calculateCartTotals(
+      cart.items,
+      cart.couponDiscount || 0,
+    );
 
     return {
       statusCode: 200,
@@ -497,7 +548,10 @@ export class CartService {
       ],
     });
 
-    await updatedCart.populate('couponId', 'code description discountType discountValue');
+    await updatedCart.populate(
+      'couponId',
+      'code description discountType discountValue',
+    );
 
     return {
       statusCode: 200,
@@ -542,9 +596,12 @@ export class CartService {
         { path: 'categoryId', select: 'name image' },
       ],
     });
-    
+
     if (updatedCart.couponId) {
-      await updatedCart.populate('couponId', 'code description discountType discountValue');
+      await updatedCart.populate(
+        'couponId',
+        'code description discountType discountValue',
+      );
     }
 
     return {
@@ -554,4 +611,3 @@ export class CartService {
     };
   }
 }
-

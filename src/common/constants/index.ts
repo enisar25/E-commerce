@@ -12,7 +12,13 @@ export const PAGINATION = {
 // File Upload
 export const FILE_UPLOAD = {
   MAX_SIZE: 5 * 1024 * 1024, // 5MB
-  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
+  ALLOWED_IMAGE_TYPES: [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp',
+    'image/gif',
+  ],
   MAX_FILES: 10,
 } as const;
 
@@ -48,4 +54,3 @@ export const MESSAGES = {
   VALIDATION_ERROR: 'Validation failed',
   INTERNAL_ERROR: 'Internal server error',
 } as const;
-

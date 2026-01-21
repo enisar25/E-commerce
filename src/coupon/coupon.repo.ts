@@ -1,17 +1,19 @@
-import { Injectable } from "@nestjs/common";
-import { BaseRepository } from "../database/repositories/base.repository";
-import { Model, Types } from "mongoose";
-import { InjectModel } from "@nestjs/mongoose";
-import { Coupon } from "./coupon.model";
+import { Injectable } from '@nestjs/common';
+import { BaseRepository } from '../database/repositories/base.repository';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Coupon } from './coupon.model';
 
 @Injectable()
 export class CouponRepo extends BaseRepository<Coupon> {
-  constructor(@InjectModel(Coupon.name) private readonly couponModel: Model<Coupon>) {
+  constructor(
+    @InjectModel(Coupon.name) private readonly couponModel: Model<Coupon>,
+  ) {
     super(couponModel);
   }
 
   async findByCode(code: string) {
-    return this.couponModel.findOne({ 
+    return this.couponModel.findOne({
       code: code.toUpperCase(),
       isActive: true,
     });
@@ -36,7 +38,10 @@ export class CouponRepo extends BaseRepository<Coupon> {
     });
   }
 
-  async incrementUsage(couponId: string | Types.ObjectId, userId: string | Types.ObjectId) {
+  async incrementUsage(
+    couponId: string | Types.ObjectId,
+    userId: string | Types.ObjectId,
+  ) {
     return this.couponModel.findByIdAndUpdate(
       couponId,
       {
@@ -53,11 +58,20 @@ export class CouponRepo extends BaseRepository<Coupon> {
     const skip = (page - 1) * limit;
 
     const [coupons, total] = await Promise.all([
-      this.couponModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }),
+      this.couponModel
+        .find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }),
       this.couponModel.countDocuments(filter),
     ]);
 
-    return { coupons, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return {
+      coupons,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
-

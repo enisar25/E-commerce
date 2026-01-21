@@ -20,15 +20,20 @@ export const createImagesFromFiles = (
   return files.map((file) => createImageFromFile(file, baseUrl));
 };
 
-export const createImageFromString = (urlOrFilename: string, baseUrl: string = '/uploads'): Image => {
+export const createImageFromString = (
+  urlOrFilename: string,
+  baseUrl: string = '/uploads',
+): Image => {
   // If it's already a full URL, use it; otherwise construct the URL
-  const url = urlOrFilename.startsWith('http') || urlOrFilename.startsWith('/')
-    ? urlOrFilename
-    : `${baseUrl}/${urlOrFilename}`;
+  const url =
+    urlOrFilename.startsWith('http') || urlOrFilename.startsWith('/')
+      ? urlOrFilename
+      : `${baseUrl}/${urlOrFilename}`;
 
   return {
     url,
-    filename: urlOrFilename.includes('/') ? urlOrFilename.split('/').pop() : urlOrFilename,
+    filename: urlOrFilename.includes('/')
+      ? urlOrFilename.split('/').pop()
+      : urlOrFilename,
   };
 };
-

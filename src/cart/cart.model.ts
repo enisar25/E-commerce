@@ -1,5 +1,5 @@
-import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ _id: false })
 export class CartItem {
@@ -60,7 +60,7 @@ export class Cart {
     type: [cartItemSchema],
     default: [],
     validate: {
-      validator: function(items: CartItem[]) {
+      validator: function (items: CartItem[]) {
         return items.length <= 100; // Max 100 items in cart
       },
       message: 'Cart cannot have more than 100 items',
@@ -137,4 +137,3 @@ export const CartModel = MongooseModule.forFeature([
 
 export type HCart = HydratedDocument<Cart>;
 export type HCartItem = HydratedDocument<CartItem>;
-

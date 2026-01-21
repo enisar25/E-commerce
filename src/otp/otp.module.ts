@@ -5,11 +5,7 @@ import { OTPRepo } from './otp.repo';
 import { OTPService } from './otp.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: OTP.name, schema: otpSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: OTP.name, schema: otpSchema }])],
   providers: [OTPRepo, OTPService],
   exports: [OTPService],
 })

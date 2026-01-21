@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, UsePipes } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  UploadedFile,
+  UsePipes,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { AuthGuard,type AuthRequest } from 'src/common/guards/auth.guard';
+import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
@@ -21,8 +34,13 @@ export class CategoryController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @UsePipes(new ZodPipe(createCategorySchema))
-  @UseInterceptors(FileInterceptor('image', getMulterOptions('./uploads/categories', { maxSize: 5 * 1024 * 1024 })))
-  async create( 
+  @UseInterceptors(
+    FileInterceptor(
+      'image',
+      getMulterOptions('./uploads/categories', { maxSize: 5 * 1024 * 1024 }),
+    ),
+  )
+  async create(
     @Req() req: AuthRequest,
     @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile() file: Express.Multer.File,
@@ -53,14 +71,22 @@ export class CategoryController {
   @UsePipes(new ZodPipe(updateCategorySchema))
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('image', getMulterOptions('./uploads/categories', { maxSize: 5 * 1024 * 1024 })))
+  @UseInterceptors(
+    FileInterceptor(
+      'image',
+      getMulterOptions('./uploads/categories', { maxSize: 5 * 1024 * 1024 }),
+    ),
+  )
   update(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (file) {
-      updateCategoryDto.image = createImageFromFile(file, '/uploads/categories');
+      updateCategoryDto.image = createImageFromFile(
+        file,
+        '/uploads/categories',
+      );
     }
     return this.categoryService.update(id, updateCategoryDto);
   }

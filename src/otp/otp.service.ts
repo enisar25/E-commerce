@@ -17,7 +17,7 @@ export class OTPService {
     }
 
     if (existingOTP && existingOTP.expiresAt <= new Date()) {
-      await this.otpRepo.findByIdAndDelete({id: existingOTP._id});
+      await this.otpRepo.findByIdAndDelete({ id: existingOTP._id });
     }
 
     const otp = generateOTP();
@@ -48,7 +48,7 @@ export class OTPService {
   }
 
   async deleteOTP(userId: Types.ObjectId, _type: OTPTypeEnum, _otp: string) {
-    await this.otpRepo.findByIdAndDelete({id: userId});
+    await this.otpRepo.findByIdAndDelete({ id: userId });
     return true;
   }
 

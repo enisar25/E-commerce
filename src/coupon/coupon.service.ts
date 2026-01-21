@@ -51,11 +51,16 @@ export class CouponService {
 
     // Validate dates
     if (new Date(payload.validFrom) >= new Date(payload.validTo)) {
-      throw new BadRequestException('Valid to date must be after valid from date');
+      throw new BadRequestException(
+        'Valid to date must be after valid from date',
+      );
     }
 
     // Validate discount value based on type
-    if (payload.discountType === DiscountType.PERCENTAGE && payload.discountValue > 100) {
+    if (
+      payload.discountType === DiscountType.PERCENTAGE &&
+      payload.discountValue > 100
+    ) {
       throw new BadRequestException('Percentage discount cannot exceed 100%');
     }
 
@@ -77,7 +82,10 @@ export class CouponService {
     const pageNum = page ? Math.max(1, page) : 1;
     const limitNum = limit ? Math.max(1, Math.min(100, limit)) : 10;
 
-    const result = await this.couponRepo.findAllWithPagination({}, { page: pageNum, limit: limitNum });
+    const result = await this.couponRepo.findAllWithPagination(
+      {},
+      { page: pageNum, limit: limitNum },
+    );
 
     return {
       statusCode: 200,
@@ -132,7 +140,9 @@ export class CouponService {
     const validFrom = payload.validFrom || coupon.validFrom;
     const validTo = payload.validTo || coupon.validTo;
     if (new Date(validFrom) >= new Date(validTo)) {
-      throw new BadRequestException('Valid to date must be after valid from date');
+      throw new BadRequestException(
+        'Valid to date must be after valid from date',
+      );
     }
 
     const updated = await this.couponRepo.findByIdAndUpdate({
@@ -172,7 +182,16 @@ export class CouponService {
     };
   }
 
-  async validateCoupon(code: string, cartTotal: number, userId: string): Promise<{ valid: boolean; coupon: any; discount: number; error?: string }> {
+  async validateCoupon(
+    code: string,
+    cartTotal: number,
+    userId: string,
+  ): Promise<{
+    valid: boolean;
+    coupon: any;
+    discount: number;
+    error?: string;
+  }> {
     const coupon = await this.couponRepo.findValidCouponByCode(code);
 
     if (!coupon) {
@@ -242,7 +261,10 @@ export class CouponService {
     let discount = 0;
     if (coupon.discountType === DiscountType.PERCENTAGE) {
       discount = (cartTotal * coupon.discountValue) / 100;
-      if (coupon.maximumDiscount !== null && discount > coupon.maximumDiscount) {
+      if (
+        coupon.maximumDiscount !== null &&
+        discount > coupon.maximumDiscount
+      ) {
         discount = coupon.maximumDiscount;
       }
     } else {
@@ -277,4 +299,3 @@ export class CouponService {
     };
   }
 }
-

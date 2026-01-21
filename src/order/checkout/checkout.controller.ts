@@ -19,8 +19,13 @@ export class CheckoutController {
 
   @Post()
   @UsePipes(new ZodPipe(checkoutSchema))
-  async createCheckout(@Req() req: AuthRequest, @Body() checkoutDto: CheckoutDto) {
-    return this.checkoutService.createCheckout(req.user._id.toString(), checkoutDto as any);
+  async createCheckout(
+    @Req() req: AuthRequest,
+    @Body() checkoutDto: CheckoutDto,
+  ) {
+    return this.checkoutService.createCheckout(
+      req.user._id.toString(),
+      checkoutDto as any,
+    );
   }
 }
-

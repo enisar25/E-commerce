@@ -7,11 +7,21 @@ export interface FileFilterOptions {
 
 export const createFileFilter = (options: FileFilterOptions = {}) => {
   const {
-    allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
+    allowedMimeTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+    ],
     // maxSize = 5 * 1024 * 1024, // 5MB default
   } = options;
 
-  return (req: any, file: Express.Multer.File, cb: (error: Error | null, acceptFile: boolean) => void) => {
+  return (
+    req: any,
+    file: Express.Multer.File,
+    cb: (error: Error | null, acceptFile: boolean) => void,
+  ) => {
     // Check MIME type
     if (!allowedMimeTypes.includes(file.mimetype)) {
       return cb(
@@ -27,4 +37,3 @@ export const createFileFilter = (options: FileFilterOptions = {}) => {
     cb(null, true);
   };
 };
-

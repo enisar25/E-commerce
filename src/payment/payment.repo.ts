@@ -45,7 +45,13 @@ export class PaymentIntentRepo extends BaseRepository<PaymentIntent> {
       this.paymentIntentModel.countDocuments(filter),
     ]);
 
-    return { intents, total, page, limit, totalPages: Math.ceil(total / limit) };
+    return {
+      intents,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async updateStatus(
@@ -55,7 +61,10 @@ export class PaymentIntentRepo extends BaseRepository<PaymentIntent> {
   ) {
     const update: any = { status };
 
-    if (status === PaymentIntentStatus.SUCCEEDED && !additionalData?.completedAt) {
+    if (
+      status === PaymentIntentStatus.SUCCEEDED &&
+      !additionalData?.completedAt
+    ) {
       update.completedAt = new Date();
     }
 
@@ -90,4 +99,3 @@ export class PaymentIntentRepo extends BaseRepository<PaymentIntent> {
     return this.paymentIntentModel.findOne({ stripeSessionId });
   }
 }
-

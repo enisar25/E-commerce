@@ -42,10 +42,7 @@ export class CouponController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  findAll(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-  ) {
+  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.couponService.findAll(
       page ? Number(page) : undefined,
       limit ? Number(limit) : undefined,
@@ -105,4 +102,3 @@ export class CouponController {
     );
   }
 }
-

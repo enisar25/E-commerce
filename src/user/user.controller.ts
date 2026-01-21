@@ -1,6 +1,15 @@
-import { Controller, Get, Patch, Body, UseGuards, Req, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard,type AuthRequest } from 'src/common/guards/auth.guard';
+import { AuthGuard, type AuthRequest } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/roles.enum';
@@ -19,7 +28,10 @@ export class UserController {
 
   @Patch('profile')
   updateProfile(@Req() req: AuthRequest, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.updateProfile(req.user._id.toString(), updateUserDto);
+    return this.userService.updateProfile(
+      req.user._id.toString(),
+      updateUserDto,
+    );
   }
 
   @Patch(':userId/role')
